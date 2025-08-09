@@ -11,7 +11,7 @@ const unsigned int LED_CYCLES_MULTIPLIER = 10;
 unsigned int global_cycle_count = 0;
 unsigned int led_cycle_count = 0;
 bool led_is_counting_up = true;
-unsigned int led_current_index = 1;
+unsigned int led_current_index = 0;
 
 void litLed(unsigned int idx);
 
@@ -20,11 +20,11 @@ void setup() {
         pinMode(x, OUTPUT);
     }
 
-    for (int x = 0; x < sizeof(SWITCHING_PINS)/sizeof(DATA_PINS[0]) ; x++) {
+    for (int x = 0; x < sizeof(SWITCHING_PINS)/sizeof(SWITCHING_PINS[0]) ; x++) {
         pinMode(x, OUTPUT);
     }
 
-    for (int x = 0; x < sizeof(LED_SSD_PINS)/sizeof(DATA_PINS[0]) ; x++) {
+    for (int x = 0; x < sizeof(LED_SSD_PINS)/sizeof(LED_SSD_PINS[0]) ; x++) {
         pinMode(x, OUTPUT);
     }
 }
@@ -35,13 +35,13 @@ void loop() {
     if (global_cycle_count%LED_CYCLES_MULTIPLIER == 0) {
         if (led_is_counting_up) {
             led_current_index = led_cycle_count + 1;
-            led_is_counting_up = (led_cycle_count >= 7) ? false : true;
+            led_is_counting_up = (led_cycle_count >= 8) ? false : true;
         } else {
             led_current_index = 8 - led_cycle_count;
-            led_is_counting_up = (led_cycle_count >= 7) ? true : false;
+            led_is_counting_up = (led_cycle_count >= 8) ? true : false;
         }
 
-        led_cycle_count = (led_cycle_count < 7) ? led_cycle_count + 1 : 0;
+        led_cycle_count = (led_cycle_count < 8) ? led_cycle_count + 1 : 0;
     }
     
     litLed(led_current_index);
@@ -52,7 +52,14 @@ void loop() {
 }
 
 void litLed(unsigned int idx) {
+    clearData();
     digitalWrite(LED_SSD_PINS[LED_GND_INDEX], LOW);
     digitalWrite(LED_SSD_PINS[SSD_GND_INDEX], HIGH);
     digitalWrite(DATA_PINS[idx], HIGH);
+}
+
+void clearData() {
+    for (int x = 0; x < sizeof(DATA_PINS)/sizeof(DATA_PINS[0]) ; x++) {
+        digitalWrite(x, LOW);
+    }
 }
