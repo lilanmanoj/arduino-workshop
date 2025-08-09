@@ -1,9 +1,9 @@
 #include<Arduino.h>
 
 const unsigned int MAX_CYCLE_COUNT = 1000;
-const unsigned int DATA_PINS[8] = {2, 3, 4, 5, 6, 7, 8, 9};
-const unsigned int SWITCHING_PINS[4] = {10, 11, 12, 13};
-const unsigned int LED_SSD_PINS[2] = {18, 19};
+const unsigned int DATA_PINS[8] = {2, 3, 4, 5, 6, 7, 14, 15};
+const unsigned int SWITCHING_PINS[4] = {16, 17, 18, 19};
+const unsigned int LED_SSD_PINS[2] = {12, 13};
 const unsigned int LED_GND_INDEX = 0;
 const unsigned int SSD_GND_INDEX = 1;
 const unsigned int PROGRAM_DELAY = 10;
@@ -16,16 +16,16 @@ unsigned int led_current_index = 0;
 void litLed(unsigned int idx);
 
 void setup() {
-    for (int x = 0; x < sizeof(DATA_PINS)/sizeof(DATA_PINS[0]) ; x++) {
-        pinMode(x, OUTPUT);
+    for (int x = 0; x < sizeof(DATA_PINS)/sizeof(DATA_PINS[0]); x++) {
+        pinMode(DATA_PINS[x], OUTPUT);
     }
 
-    for (int x = 0; x < sizeof(SWITCHING_PINS)/sizeof(SWITCHING_PINS[0]) ; x++) {
-        pinMode(x, OUTPUT);
+    for (int x = 0; x < sizeof(SWITCHING_PINS)/sizeof(SWITCHING_PINS[0]); x++) {
+        pinMode(SWITCHING_PINS[x], OUTPUT);
     }
 
-    for (int x = 0; x < sizeof(LED_SSD_PINS)/sizeof(LED_SSD_PINS[0]) ; x++) {
-        pinMode(x, OUTPUT);
+    for (int x = 0; x < sizeof(LED_SSD_PINS)/sizeof(LED_SSD_PINS[0]); x++) {
+        pinMode(LED_SSD_PINS[x], OUTPUT);
     }
 }
 
@@ -47,7 +47,7 @@ void loop() {
     litLed(led_current_index);
 
     global_cycle_count = (global_cycle_count == MAX_CYCLE_COUNT) ? 0 : global_cycle_count;
-    
+
     delay(PROGRAM_DELAY);
 }
 
