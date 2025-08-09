@@ -33,15 +33,15 @@ void loop() {
     global_cycle_count++;
 
     if (global_cycle_count%LED_CYCLES_MULTIPLIER == 0) {
-        if (led_is_counting_up) {
-            led_current_index = led_cycle_count + 1;
-            led_is_counting_up = (led_cycle_count >= 8) ? false : true;
-        } else {
-            led_current_index = 8 - led_cycle_count;
-            led_is_counting_up = (led_cycle_count >= 8) ? true : false;
-        }
+        led_cycle_count = (led_cycle_count < 7) ? led_cycle_count + 1 : 0;
 
-        led_cycle_count = (led_cycle_count < 8) ? led_cycle_count + 1 : 0;
+        if (led_is_counting_up) {
+            led_current_index = led_cycle_count;
+            led_is_counting_up = (led_cycle_count >= 7) ? false : true;
+        } else {
+            led_current_index = 7 - led_cycle_count;
+            led_is_counting_up = (led_cycle_count >= 7) ? true : false;
+        }        
     }
     
     litLed(led_current_index);
@@ -60,6 +60,6 @@ void litLed(unsigned int idx) {
 
 void clearData() {
     for (int x = 0; x < sizeof(DATA_PINS)/sizeof(DATA_PINS[0]) ; x++) {
-        digitalWrite(x, LOW);
+        digitalWrite(DATA_PINS[x], LOW);
     }
 }
