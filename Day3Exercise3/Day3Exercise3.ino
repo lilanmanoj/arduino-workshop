@@ -3,7 +3,6 @@
 const unsigned int DATA_PINS[8] = {15, 14, 7, 6, 5, 4, 3, 2};
 const unsigned int LED_GND_PIN = 12;
 const unsigned int SW_PIN = 11;
-const int DEBOUNCE_DELAY = 50;
 const int DEBOUNCE_RELEASE_DELAY = 50;
 bool is_counting_up = true;
 unsigned int count = 0;
@@ -22,15 +21,10 @@ void loop() {
     displayValue(count);
 
     if (digitalRead(SW_PIN) == LOW) {
-        delay(DEBOUNCE_DELAY);
-
-        if (digitalRead(SW_PIN) == LOW) {
-            count = (is_counting_up) ? count + 1 : count - 1;
-
-            // Wait for button release
-            while (digitalRead(SW_PIN) == HIGH) {
-                delay(DEBOUNCE_RELEASE_DELAY);
-            }
+        count = (is_counting_up) ? count + 1 : count - 1;
+        
+        while(digitalRead(SW_PIN) == LOW) {
+            delay(DEBOUNCE_RELEASE_DELAY);
         }
     }
 
