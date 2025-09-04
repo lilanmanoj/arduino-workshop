@@ -9,21 +9,19 @@
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-unsigned int count = 0;
+String scrollingText = "This is scrolling text demo!";
 
 void setup() {
     lcd.init();
-    lcd.backlight();
+    // Uncomment below to turn on the blacklight
+    // lcd.backlight();
 }
 
 void loop() {
-    lcd.clear();
     lcd.setCursor(0,0);
+    lcd.scrollDisplayLeft();
+    lcd.print(scrollingText);
+    lcd.blink();
 
-    lcd.print("Count: ");
-    lcd.print(count);
-
-    count = (count < 10) ? count + 1 : 0;
-
-    delay(500);
+    delay(200);
 }
