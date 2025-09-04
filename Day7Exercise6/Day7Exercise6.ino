@@ -1,10 +1,15 @@
+/*
+* This requires the LiquidCrystal_I2C library.
+* Install it using Arduino IDE Library Manager.
+* Or from ardiuino-cli using:
+* > arduino-cli lib install "LiquidCrystal_I2C"
+*/
 #include<Arduino.h>
 #include<LiquidCrystal_I2C.h>
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 /** Const **/
-const unsigned int BUZZER = 3;
 const unsigned int PROG_DELAY = 5;
 const float THRESHOLD = 3.5;
 
@@ -17,8 +22,8 @@ void setup() {
     lcd.backlight();
 
     pinMode(A0, INPUT);
-    pinMode(BUZZER, OUTPUT);
-    digitalWrite(BUZZER, LOW);
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, LOW);
 }
 
 void loop() {
@@ -38,9 +43,9 @@ void loop() {
     lcd.print("V");
 
     if (sigVolt > THRESHOLD) {
-        digitalWrite(BUZZER, HIGH);
+        digitalWrite(LED_BUILTIN, HIGH);
     } else {
-        digitalWrite(BUZZER, LOW);
+        digitalWrite(LED_BUILTIN, LOW);
     }
 
     delay(PROG_DELAY);
