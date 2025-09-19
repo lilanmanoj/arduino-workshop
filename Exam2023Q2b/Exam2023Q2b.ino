@@ -15,7 +15,6 @@ const uint8_t CHAR_MAP[4] = {
 };
 
 uint8_t current_char = 0;
-unsigned int dl = 500;
 bool start = false;
 
 void setup() {
@@ -37,6 +36,7 @@ void setup() {
 
 void loop() {
     if (digitalRead(SW1) == HIGH) {
+        // Debounce logic
         while (digitalRead(SW1) == HIGH) {
             delay(50);
         }
