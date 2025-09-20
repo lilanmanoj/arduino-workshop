@@ -1,7 +1,7 @@
 #include<Arduino.h>
 
 const unsigned int FIXED_RESISTANCE = 1000;
-const uint8_t APIN = 18; 
+const uint8_t APIN = 14; 
 int adc_val = 0;
 float voltage = 0;
 float resistance = 0;
