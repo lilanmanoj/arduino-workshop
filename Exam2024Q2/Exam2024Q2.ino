@@ -5,8 +5,10 @@
 #define DHT_TYPE DHT11
 #define US_TRIG 3
 #define US_ECHO 4
-#define PROG_DELAY 1000
+#define PROG_DELAY 10
 
+String command = "";
+bool displayDone = false;
 float humidityP = 0;
 float tempC = 0;
 long durationMicro = 0;
@@ -27,19 +29,34 @@ void loop() {
     tempC = dht.readTemperature();
     distanceCm = getDistance();
 
-    Serial.print("Temperature: ");
-    Serial.print(tempC);
-    Serial.print(" ");
-    Serial.print((char)223);
-    Serial.println("C");
+    if (Serial.available()) {
+        command = Serial.readStringUntil('\n');
+        displayDone = false;
+    }
 
-    Serial.print("Humidity: ");
-    Serial.print(humidityP);
-    Serial.println(" %");
+    if (command == "read_temp" && !displayDone) {
+        Serial.print("Temperature: ");
+        Serial.print(tempC);
+        Serial.println(" °C");
 
-    Serial.print("Distance: ");
-    Serial.print(distanceCm);
-    Serial.println(" cm");
+        displayDone = true;
+    }
+
+    if (command == "read_humid" && !displayDone) {
+        Serial.print("Humidity: ");
+        Serial.print(humidityP);
+        Serial.println(" %");
+
+        displayDone = true;
+    }
+
+    if (command == "read_dist" && !displayDone) {
+        Serial.print("Distance: ");
+        Serial.print(distanceCm);
+        Serial.println(" cm");
+
+        displayDone = true;
+    }
 
     delay(PROG_DELAY);
 }
