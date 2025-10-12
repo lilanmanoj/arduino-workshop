@@ -84,17 +84,5 @@ void loop() {
     client.print("GET /update?api_key=" + writeApiKey + "&field1=" + tempC + "&field2=" + humidityP + footer);
     readResponse(&client);
 
-    // READ --------------------------------------------------------------------------------------------
-
-    // String readRequest = "GET /channels/" + channelID + "/fields/" + fieldNumber + ".json?results=" + numberOfResults + " HTTP/1.1\r\n" + "Host: " + host + "\r\n"
-    //                     + "Connection: close\r\n\r\n";
-
-    // if (!client.connect(host, httpPort)) {
-    //     return;
-    // }
-
-    // client.print(readRequest);
-    // readResponse(&client);
-
     delay(PROG_DELAY);
 }
