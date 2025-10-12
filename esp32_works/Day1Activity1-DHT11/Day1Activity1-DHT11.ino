@@ -5,7 +5,7 @@
 
 #define DHTPIN 4
 #define DHTTYPE DHT11
-#define PROG_DELAY 3000
+#define PROG_DELAY 5000
 
 const char *ssid = "UOC_Staff";
 const char *password = "admin106";
