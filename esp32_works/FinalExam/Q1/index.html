@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ESP32 DHT11 Readings</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 300px;
+    }
+    th, td {
+      border: 1px solid #444;
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h2>ESP32 DHT11 Sensor Data</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Temperature (°C)</th>
+        <th>Humidity (%)</th>
+        <th>Timestamp</th>
+      </tr>
+    </thead>
+    <tbody id="dataTable">
+    </tbody>
+  </table>
+
+  <script>
+    const ESP32_URL = "http://10.21.89.234/dht";   // change to your ESP32 IP
+
+    function fetchData() {
+      fetch(ESP32_URL)
+        .then(response => response.json())
+        .then(data => {
+          const table = document.getElementById("dataTable");
+
+          // Create a new row
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
+            <td>${data.temperature.toFixed(1)}</td>
+            <td>${data.humidity.toFixed(1)}</td>
+            <td>${new Date().toLocaleTimeString()}</td>
+          `;
+
+          table.prepend(row);  // newest data on top
+        })
+        .catch(err => console.error("Error:", err));
+    }
+
+    // Fetch data every 2 seconds
+    setInterval(fetchData, 2000);
+
+    // Fetch immediately on page load
+    fetchData();
+  </script>
+
+</body>
+</html>
