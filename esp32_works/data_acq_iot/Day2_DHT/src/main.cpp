@@ -3,16 +3,23 @@
 #include <WiFiClient.h>
 #include <HTTPClient.h>
 #include <time.h>
+#include <DHT.h>
 #include "string.h"
+
+#define DHTPIN 4
+#define DHTTYPE DHT11
 
 const char* ssid = WIFI_SSID;
 const char* password = WIFI_PASS;
-const char* endpoint = "http://10.21.82.181:8080/iot/data_json.php";
+const char* endpoint = "http://10.21.82.181:8080/iot/data_dht.php";
 const char* device_id = "24sea052";
 const long interval = 5000; // Interval at which to send data (milliseconds)
 unsigned long previousMillis = 0;
+float humidityP = 0;
+float tempC = 0;
 time_t now = time(nullptr);
 
+DHT dht(DHTPIN, DHTTYPE);
 WiFiClient client;
 HTTPClient http;
 
@@ -57,7 +64,7 @@ void timeSync() {
 
 void connectGetRequest() {
     unsigned long timestamp = now + (millis() / 1000);
-    String data = "{\"RSSI\": \"" + String(WiFi.RSSI()) + "\", \"timestamp\": \"" + String(timestamp) + "\", \"device\": \"" + String(device_id) + "\"}";
+    String data = "{\"temperature\": \"" + String(tempC) + "\", \"humidity\": \"" + String(humidityP) + "\", \"timestamp\": \"" + String(timestamp) + "\", \"device\": \"" + String(device_id) + "\"}";
     String url = String(endpoint);
 
     Serial.println(data);
@@ -94,13 +101,17 @@ void connectGetRequest() {
 void setup() {
     Serial.begin(115200);
     delay(1000);
-
+    dht.begin();
+    delay(2000);
     setupWiFi();
     timeSync();
 }
 
 void loop() {
     if ((millis()-previousMillis) > interval && WiFi.status() == WL_CONNECTED) {
+        humidityP = dht.readHumidity();
+        tempC = dht.readTemperature();
+
         connectGetRequest();
         previousMillis = millis();
     }
