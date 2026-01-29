@@ -1,0 +1,4 @@
+# Source this file before working with arduino-cli
+# this will export some common env variables
+export ESP32S3="esp32:esp32:esp32s3"
+export PORT="/dev/ttyACM0"
