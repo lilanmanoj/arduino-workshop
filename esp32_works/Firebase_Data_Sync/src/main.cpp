@@ -15,10 +15,10 @@
 
 const char* ssid = WIFI_SSID;
 const char* password = WIFI_PASS;
-const char* web_api_key = API_KEY;
-const char* database_url = DB_URL;
-const char* auth_email = AUTH_EMAIL;
-const char* auth_pass = AUTH_PASS;
+const String web_api_key = API_KEY;
+const String database_url = DB_URL;
+const String auth_email = AUTH_EMAIL;
+const String auth_pass = AUTH_PASS;
 
 unsigned long previousMillis = 0;
 float humidity = 0;
