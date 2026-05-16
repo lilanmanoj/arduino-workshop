@@ -2,14 +2,16 @@
 #include <DHT.h>
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
+
+#define ENABLE_USER_AUTH
+#define ENABLE_DATABASE
+
 #include <FirebaseClient.h>
 
 #define DHTPIN 1
 #define DHTTYPE DHT11
 #define PROG_DELAY 100
 #define DHT_READ_DELAY 4000
-#define ENABLE_USER_AUTH
-#define ENABLE_DATABASE
 
 const char* ssid = WIFI_SSID;
 const char* password = WIFI_PASS;
@@ -70,7 +72,6 @@ void setupWiFi() {
 
     // Configure SSL client
     ssl_client.setInsecure();
-    ssl_client.setConnectionTimeout(1000);
     ssl_client.setHandshakeTimeout(5);
 }
 
