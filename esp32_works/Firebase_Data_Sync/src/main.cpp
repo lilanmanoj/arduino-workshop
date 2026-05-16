@@ -25,16 +25,14 @@ float temp = 0;
 // WiFi Secure Client Init
 WiFiClientSecure ssl_client;
 
-// DHT11 init
+// DHT11 Init
 DHT dht(DHTPIN, DHTTYPE);
 
-// Firebase Authentication
-UserAuth user_auth(web_api_key, database_url, auth_pass);
-
-// Firebase components
-FirebaseApp app;
+// Firebase Init
 using AsyncClient = AsyncClientClass;
 AsyncClient aClient(ssl_client);
+UserAuth user_auth(web_api_key, auth_email, auth_pass, 3000);
+FirebaseApp app;
 RealtimeDatabase Database;
 
 void processData(AsyncResult &aResult) {
@@ -78,6 +76,10 @@ void setupWiFi() {
 
 void setupFirebase() {
     // Initialize Firebase
+    Firebase.printf("Firebase Client v%s\n", FIREBASE_CLIENT_VERSION);
+
+    Serial.println("Initializing app...");
+
     initializeApp(aClient, app, getAuth(user_auth), processData, "🔐 authTask");
     app.getApp<RealtimeDatabase>(Database);
     Database.url(database_url);
