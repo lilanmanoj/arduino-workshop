@@ -1,18 +1,27 @@
-#include <Arduino.h>
+#include <DallasTemperature.h>
+#include <HTTPClient.h>
+#include <OneWire.h>
+#include "string.h"
+#include <time.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
-#include <HTTPClient.h>
-#include <time.h>
-#include "string.h"
 
-const char* ssid = WIFI_SSID;
-const char* password = WIFI_PASS;
-const char* endpoint = "http://10.21.82.181:8080/iot/data_post.php";
+const int oneWireBus = 4;
+const int ntc_pin = 11;
+
+const char* ssid = "UOC_Staff";
+const char* password = "admin106";
+const char* endpoint = "http://10.21.112.34/ea3120/exam_q1.php";
 const char* device_id = "24sea052";
-const long interval = 5000; // Interval at which to send data (milliseconds)
+const long interval = 3000; // Interval at which to send data (milliseconds)
 unsigned long previousMillis = 0;
 time_t now = time(nullptr);
+float tempC = 0;
+long rssi = 0;
 
+// Define external objects
+OneWire oneWire(oneWireBus);
+DallasTemperature sensors(&oneWire);
 WiFiClient client;
 HTTPClient http;
 
@@ -57,9 +66,10 @@ void timeSync() {
 
 void connectGetRequest() {
     unsigned long timestamp = now + (millis() / 1000);
-    // String data = "{\"lasttime\":\"" + String(previousMillis) + ", \"timestamp\":" + String(timestamp) + "\"device\":" + String(device_id) + "}";
-    String data = "lasttime=" + String(previousMillis) + "&timestamp=" + String(timestamp) + "&device=" + String(device_id);
+    String data = "{\"temperature\": \"" + String(tempC) + "\", \"rssi\": \"" + String(rssi) + "\", \"timestamp\": \"" + String(timestamp) + "\", \"device_id\": \"" + String(device_id) + "\"}";
     String url = String(endpoint);
+
+    Serial.println(data);
 
     // Connecting to endpoint
     Serial.print("Connecting with ");
@@ -67,7 +77,7 @@ void connectGetRequest() {
 
     if (http.begin(client, url)) {
         Serial.println("✅ Connected");
-        http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+        http.addHeader("Content-Type", "application/json");
         int httpResponseCode = http.POST(data);
 
         // httpResponseCode is negative on library error
@@ -80,7 +90,7 @@ void connectGetRequest() {
                 Serial.println(payload);
             }
         } else {
-         http://10.21.82.241:8080/iot/data_calib.php   Serial.printf("[HTTP] POST failed, error: %s\n", http.errorToString(httpResponseCode).c_str());
+            Serial.printf("[HTTP] POST failed, error: %s\n", http.errorToString(httpResponseCode).c_str());
         }
 
         // Closing the connection
@@ -91,16 +101,25 @@ void connectGetRequest() {
 }
 
 void setup() {
-    Serial.begin(115200);
-    delay(1000);
+  Serial.begin(115200);
+  delay(1000);
 
-    setupWiFi();
-    timeSync();
+  setupWiFi();
+  timeSync();
+  sensors.begin();
+  delay(2000);
 }
 
 void loop() {
-    if ((millis()-previousMillis) > interval && WiFi.status() == WL_CONNECTED) {
-        connectGetRequest();
-        previousMillis = millis();
-    }
+  if ((millis()-previousMillis) > interval && WiFi.status() == WL_CONNECTED) {
+    sensors.requestTemperatures();
+    tempC = sensors.getTempCByIndex(0);
+    Serial.print(tempC);
+    Serial.println("ºC");
+
+    rssi = WiFi.RSSI();
+
+    connectGetRequest();
+    previousMillis = millis();
+  }
 }
