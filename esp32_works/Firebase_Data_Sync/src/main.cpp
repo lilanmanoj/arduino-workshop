@@ -23,6 +23,7 @@ const String auth_pass = AUTH_PASS;
 unsigned long previousMillis = 0;
 float humidity = 0;
 float temp = 0;
+u_int8_t key1 = 0;
 
 // WiFi Secure Client Init
 WiFiClientSecure ssl_client;
@@ -50,8 +51,20 @@ void processData(AsyncResult &aResult) {
   if (aResult.isError())
     Firebase.printf("Error task: %s, msg: %s, code: %d\n", aResult.uid().c_str(), aResult.error().message().c_str(), aResult.error().code());
 
-  if (aResult.available())
+  if (aResult.available()) {
     Firebase.printf("task: %s, payload: %s\n", aResult.uid().c_str(), aResult.c_str());
+
+    // Extract the payload as a String
+    String payload = aResult.c_str();
+
+    // Handle int
+    if (aResult.uid() == "RTDB_GetInt"){
+        // Extract the value as an int
+        key1 = payload.toInt();
+        Firebase.printf("Key1 state: %d\n", key1);
+        digitalWrite(LED_BUILTIN, key1);
+    }
+  }
 }
 
 void setupWiFi() {
@@ -90,6 +103,8 @@ void setup() {
     Serial.begin(115200);
     delay(1000);
 
+    pinMode(LED_BUILTIN, OUTPUT);
+
     dht.begin();
     setupWiFi();
     setupFirebase();
@@ -100,7 +115,7 @@ void loop() {
     app.loop();
 
     // Check if authentication is ready
-    if (app.ready()){ 
+    if (app.ready()){
         unsigned long currentMillis = millis();
 
         if (currentMillis - previousMillis >= DHT_READ_DELAY) {
@@ -119,9 +134,12 @@ void loop() {
                 Serial.print(humidity);
                 Serial.println(" %");
 
-                // send data to Firebase
+                // Write data to Firebase Realtime DB
                 Database.set<float>(aClient, "/esp32/temperature", temp, processData, "RTDB_Send_Float");
                 Database.set<float>(aClient, "/esp32/humidity", humidity, processData, "RTDB_Send_Float");
+
+                // Read data from Firebase Realtime DB
+                Database.get(aClient, "/switch/key1", processData, false, "RTDB_GetInt");
             }
         }
 
